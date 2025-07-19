@@ -53,7 +53,7 @@ with mlflow.start_run():
     mlflow.log_metric("f1_score_weighted", f1)
     mlflow.log_metric("precision_weighted", precision)
     mlflow.log_metric("recall_weighted", recall)
-    mlflow.set_tag("Author", "Ankit Aj")
+    mlflow.set_tag("Author", "debasish")
 
     # Save and log model
     joblib.dump(clf, "random_forest_model.pkl")
