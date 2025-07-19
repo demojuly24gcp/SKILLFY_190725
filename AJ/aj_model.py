@@ -15,7 +15,7 @@ X = data.drop('quality', axis=1)
 y = data['quality']
 
 # Split into train and test sets
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
 # Create and train the classifier
 clf = RandomForestClassifier(random_state=42)
@@ -43,5 +43,6 @@ with mlflow.start_run():
     mlflow.log_param("test_size", 0.2)
     mlflow.log_metric("accuracy", accuracy)
     mlflow.log_metric("f1_score_weighted", f1)
+    mlflow.set_tag("Author", "Ankit Aj")
     mlflow.log_metric("precision_weighted", precision)
     mlflow.log_metric("recall_weighted", recall)

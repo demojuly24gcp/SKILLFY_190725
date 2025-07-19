@@ -2,10 +2,14 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report
-from sklearn.metrics import f1_score
+from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
+import dagshub
+import requests
+import mlflow
+import joblib
 
 # Load dataset
-data = pd.read_csv(r'winequality-red.csv')  # Ensure this file is in your working directory
+data = pd.read_csv(r'C:\Users\ankit_aj\Desktop\MLOPS-case_studies\Demo_050725_DVC\SKILLFY_190725\data\winequality-red.csv')
 
 # Features and target
 X = data.drop('quality', axis=1)
@@ -23,7 +27,8 @@ clf.fit(X_train, y_train)
 
 # Evaluation
 y_pred = clf.predict(X_test)
-print(classification_report(y_test, y_pred))
+report = classification_report(y_test, y_pred)
+print(report)
 
 # Print F1 score
 print("F1 Score:", f1_score(y_test, y_pred))
@@ -48,3 +53,19 @@ with mlflow.start_run():
     mlflow.log_metric("f1_score_weighted", f1)
     mlflow.log_metric("precision_weighted", precision)
     mlflow.log_metric("recall_weighted", recall)
+    mlflow.set_tag("Author", "Ankit Aj")
+
+    # Save and log model
+    joblib.dump(clf, "random_forest_model.pkl")
+    mlflow.log_artifact("random_forest_model.pkl")
+
+    # Save and log classification report
+    with open("classification_report.txt", "w") as f:
+        f.write(report)
+    mlflow.log_artifact("classification_report.txt")
+
+    # Optionally, log test data
+    X_test.to_csv("X_test.csv", index=False)
+    y_test.to_csv("y_test.csv", index=False)
+    mlflow.log_artifact("X_test.csv")
+    mlflow.log_artifact("y_test.csv")
