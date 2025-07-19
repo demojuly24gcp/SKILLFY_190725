@@ -65,8 +65,9 @@ print(f"F1-score (weighted): {f1:.4f}")
 print(f"Precision (weighted): {precision:.4f}")
 print(f"Recall (weighted): {recall:.4f}")
 
-from dagshub import dagshub_logger
-import mlflow
+mlflow.set_tracking_uri("https://dagshub.com/edurekajuly24gcp/SKILLFY_190725.mlflow")
+os.environ["MLFLOW_TRACKING_USERNAME"] = "christian-echica"
+os.environ["MLFLOW_TRACKING_PASSWORD"] = "41377f1a29b4e15de301de109f1e47b8e017edfd"
 
 dagshub.init(repo_owner='edurekajuly24gcp', repo_name='SKILLFY_190725', mlflow=True)
 
