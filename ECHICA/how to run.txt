@@ -1,0 +1,8 @@
+  streamlit run ECHICA/serve_wine_model.py
+
+
+  to train new model: 
+  python echica_model.py 
+
+  then later, run this command to expose your streamlit:
+  ngrok http 8501

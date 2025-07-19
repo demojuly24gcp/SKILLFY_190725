@@ -66,8 +66,8 @@ print(f"F1-score (weighted): {f1:.4f}")
 print(f"Precision (weighted): {precision:.4f}")
 print(f"Recall (weighted): {recall:.4f}")
 
-# Save the trained pipeline as an artifact
-model_path = "trained_pipeline.pkl"
+# Save the trained pipeline as an artifact and local copy in ECHICA directory
+model_path = os.path.join(os.path.dirname(__file__), "trained_pipeline.pkl")
 joblib.dump(pipeline, model_path)
 
 # Save the classification report as an artifact
@@ -93,6 +93,42 @@ with mlflow.start_run():
     mlflow.log_artifact(model_path)
     mlflow.log_artifact(report_path)
 
-# Clean up artifact files
-os.remove(model_path)
-os.remove(report_path)
+if __name__ == "__main__":
+    import streamlit as st
+    from pyngrok import ngrok
+    import joblib
+
+    # Set up ngrok
+    NGROK_AUTH_TOKEN = "1XhoEKzAiOMOEJAyuWszV8h24cU_6Lqw3LYmKCGuJ9fauBh7r"
+    ngrok.set_auth_token(NGROK_AUTH_TOKEN)
+    public_url = ngrok.connect(8501)
+    st.write(f"Public URL: {public_url}")
+
+    st.title("Wine Quality Prediction")
+    st.write("Enter the wine characteristics below:")
+
+    # Load the trained pipeline
+    model_path = os.path.join(os.path.dirname(__file__), "trained_pipeline.pkl")
+    if not os.path.exists(model_path):
+        st.error("Trained model not found. Please train and save the model first.")
+    else:
+        pipeline = joblib.load(model_path)
+        # Get feature names from the original dataset
+        feature_names = list(pd.read_csv(data_path).drop('quality', axis=1).columns)
+        # Create input fields for each feature
+        user_input = []
+        for feature in feature_names:
+            val = st.number_input(f"{feature}", value=0.0, format="%f")
+            user_input.append(val)
+        # Generate polynomial features to match training
+        poly = PolynomialFeatures(degree=2, include_bias=False)
+        X_user = poly.fit_transform([user_input])
+        # Feature selection (use the same indices as training)
+        rf_selector = RandomForestClassifier(n_estimators=100, random_state=42, n_jobs=-1)
+        rf_selector.fit(X_train_bal, y_train_bal)
+        importances = rf_selector.feature_importances_
+        important_indices = importances.argsort()[-int(0.8 * len(importances)):]
+        X_user_selected = X_user[:, important_indices]
+        if st.button("Predict Quality"):
+            pred = pipeline.predict(X_user_selected)
+            st.success(f"Predicted Wine Quality: {pred[0]}")
