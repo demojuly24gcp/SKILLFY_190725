@@ -6,6 +6,9 @@ from sklearn.preprocessing import StandardScaler, PolynomialFeatures
 from sklearn.metrics import classification_report, accuracy_score, f1_score, precision_score, recall_score
 from sklearn.pipeline import Pipeline
 from imblearn.over_sampling import SMOTE
+import dagshub
+from dagshub import dagshub_logger
+import mlflow
 
 # Load the wine quality dataset
 aj_dir = os.path.dirname(os.path.abspath(__file__).replace('ECHICA', 'AJ'))
@@ -61,3 +64,18 @@ print(f"Accuracy: {accuracy:.4f}")
 print(f"F1-score (weighted): {f1:.4f}")
 print(f"Precision (weighted): {precision:.4f}")
 print(f"Recall (weighted): {recall:.4f}")
+
+from dagshub import dagshub_logger
+import mlflow
+
+dagshub.init(repo_owner='edurekajuly24gcp', repo_name='SKILLFY_190725', mlflow=True)
+
+with mlflow.start_run():
+    mlflow.set_tag("author", "Christian Echica")
+    mlflow.log_param("model", "VotingClassifier")
+    mlflow.log_param("random_state", 42)
+    mlflow.log_param("test_size", 0.2)
+    mlflow.log_metric("accuracy", accuracy)
+    mlflow.log_metric("f1_score_weighted", f1)
+    mlflow.log_metric("precision_weighted", precision)
+    mlflow.log_metric("recall_weighted", recall)
