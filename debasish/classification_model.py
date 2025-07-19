@@ -27,3 +27,24 @@ print(classification_report(y_test, y_pred))
 
 # Print F1 score
 print("F1 Score:", f1_score(y_test, y_pred))
+
+accuracy = accuracy_score(y_test, y_pred)
+f1 = f1_score(y_test, y_pred, average='weighted')
+precision = precision_score(y_test, y_pred, average='weighted')
+recall = recall_score(y_test, y_pred, average='weighted')
+
+print(f"Accuracy: {accuracy:.4f}")
+print(f"F1-score (weighted): {f1:.4f}")
+print(f"Precision (weighted): {precision:.4f}")
+print(f"Recall (weighted): {recall:.4f}")
+
+dagshub.init(repo_owner='edurekajuly24gcp', repo_name='SKILLFY_190725', mlflow=True)
+
+with mlflow.start_run():
+    mlflow.log_param("model", "RandomForestClassifier")
+    mlflow.log_param("random_state", 42)
+    mlflow.log_param("test_size", 0.2)
+    mlflow.log_metric("accuracy", accuracy)
+    mlflow.log_metric("f1_score_weighted", f1)
+    mlflow.log_metric("precision_weighted", precision)
+    mlflow.log_metric("recall_weighted", recall)
