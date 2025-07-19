@@ -9,6 +9,7 @@ from imblearn.over_sampling import SMOTE
 import dagshub
 from dagshub import dagshub_logger
 import mlflow
+import joblib
 
 # Load the wine quality dataset
 aj_dir = os.path.dirname(os.path.abspath(__file__).replace('ECHICA', 'AJ'))
@@ -65,6 +66,15 @@ print(f"F1-score (weighted): {f1:.4f}")
 print(f"Precision (weighted): {precision:.4f}")
 print(f"Recall (weighted): {recall:.4f}")
 
+# Save the trained pipeline as an artifact
+model_path = "trained_pipeline.pkl"
+joblib.dump(pipeline, model_path)
+
+# Save the classification report as an artifact
+report_path = "classification_report.txt"
+with open(report_path, "w") as f:
+    f.write(classification_report(y_test, y_pred))
+
 mlflow.set_tracking_uri("https://dagshub.com/edurekajuly24gcp/SKILLFY_190725.mlflow")
 os.environ["MLFLOW_TRACKING_USERNAME"] = "christian-echica"
 os.environ["MLFLOW_TRACKING_PASSWORD"] = "41377f1a29b4e15de301de109f1e47b8e017edfd"
@@ -80,3 +90,9 @@ with mlflow.start_run():
     mlflow.log_metric("f1_score_weighted", f1)
     mlflow.log_metric("precision_weighted", precision)
     mlflow.log_metric("recall_weighted", recall)
+    mlflow.log_artifact(model_path)
+    mlflow.log_artifact(report_path)
+
+# Clean up artifact files
+os.remove(model_path)
+os.remove(report_path)
