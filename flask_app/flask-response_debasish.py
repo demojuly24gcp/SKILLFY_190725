@@ -17,3 +17,19 @@ if response.status_code == 200:
     print('Prediction:', response.json())
 else:
     print(f'Error: {response.status_code}, {response.text}')
+
+
+
+# curl -X POST http://127.0.0.1:5000/predict \
+# -H "Content-Type: application/json" \
+# -d '{"features": [5.5, 2.5, 4.0, 1.3]}'
+
+#powershell
+#Invoke-WebRequest -Uri http://127.0.0.1:5000/predict -Method POST -Headers @{"Content-Type"="application/json"} -Body '{"features": [5.1, 3.5, 1.4, 0.2]}'
+
+
+#gitbash
+
+#curl -X POST http://127.0.0.1:5000/predict \
+#-H "Content-Type: application/json" \
+#-d '{"features": [5.1, 3.5, 1.4, 0.2]}'
