@@ -8,7 +8,7 @@ import requests
 import mlflow
 
 # Load the wine quality dataset
-data = pd.read_csv(r'C:\Users\ankit_aj\Desktop\MLOPS-case_studies\Demo_050725_DVC\SKILLFY_190725\data\winequality-red.csv')
+data = pd.read_csv(r'data\winequality-red.csv')
 
 # Features and target
 X = data.drop('quality', axis=1)
@@ -33,7 +33,17 @@ recall = recall_score(y_test, y_pred, average='weighted')
 print(f"Accuracy: {accuracy:.4f}")
 print(f"F1-score (weighted): {f1:.4f}")
 print(f"Precision (weighted): {precision:.4f}")
+
 print(f"Recall (weighted): {recall:.4f}")
+
+# Save the trained model for Flask inference
+import pickle
+import os
+output_dir = os.path.join(os.path.dirname(__file__), '../model_output')
+os.makedirs(output_dir, exist_ok=True)
+model_path = os.path.join(output_dir, 'wine_rf_model.pkl')
+with open(model_path, 'wb') as f:
+    pickle.dump(clf, f)
 
 dagshub.init(repo_owner='edurekajuly24gcp', repo_name='SKILLFY_190725', mlflow=True)
 
