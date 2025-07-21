@@ -1,10 +1,15 @@
-from flask import Flask, request, jsonify
+import os
 import pickle
 import numpy as np
-import os
+from flask import Flask, request, jsonify
 
-# Load the trained model
-model_path = os.path.join(os.path.dirname(__file__), '../model_output/wine_rf_model.pkl')
+# Get model path from ENV or use default
+model_path = os.getenv(
+    "MODEL_PATH", 
+    os.path.join(os.path.dirname(__file__), '../model_output/wine_rf_model.pkl')
+)
+
+# Load the model
 with open(model_path, 'rb') as f:
     model = pickle.load(f)
 
@@ -22,4 +27,4 @@ def predict():
     return jsonify({'prediction': int(prediction[0])})
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000)
